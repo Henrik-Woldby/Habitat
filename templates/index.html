@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine tasks</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: #f6f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            text-decoration: none;
+            background: white;
+            color: #1f5eff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+        }
+
+        .points-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-wrapper {
+            flex-shrink: 0; /* 👈 forhindrer logo i at blive klemt */
+        }
+
+        .logo-large {
+            width: 140px;
+            height: auto;
+        }
+
+        .points-left {
+            flex: 1;
+        }
+        
+        .logo-small {
+            width: 70px;
+            height: auto;
+        }
+
+        .streak-line {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 14px;
+        }
+
+        .status-bad {
+            color: #b42318;
+            background: #fef3f2;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .status-good {
+            color: #027a48;
+            background: #ecfdf3;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .progress-wrap {
+            background: #e7ebf3;
+            border-radius: 999px;
+            overflow: hidden;
+            height: 20px;
+            margin-top: 14px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+            font-weight: 700;
+        }
+
+        .progress-low {
+            background: #f59e0b;
+        }
+
+        .progress-good {
+            background: #16a34a;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin: 18px 0 10px 0;
+        }
+
+        .task {
+            margin: 10px 0;
+            padding: 14px;
+            border: 1px solid #d8dee9;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+        }
+
+        .done {
+            background: #e8f7e8;
+            border-left: 5px solid #2e9d45;
+        }
+
+        .task label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.3);
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .empty-state {
+            color: #666;
+            font-size: 15px;
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+        }
+
+
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f6f7fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        #splash img {
+            width: 85vw;
+            max-width: 550px;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: splashAnim 1s ease forwards;
+        }
+
+        @keyframes splashAnim {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .points-header {
+                flex-direction: row;
+                align-items: center;
+            }
+        
+            .logo-large {
+                width: 110px;
+            }
+        }
+        
+        .logo-small {
+            width: 70px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+    </style>
+</head>
+<body>
+    <div id="splash">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Habitat logo">
+    </div>
+
+    <div class="container">
+
+        <div class="top-links">
+            <a class="nav-link" href="/calendar">📅 Kalender</a>
+            <a class="nav-link" href="/manage_tasks">⚙️ Tasks</a>
+            <a class="nav-link" href="/friends">👥 Venner</a>
+            <a class="nav-link" href="/profile">👤 Profil</a>
+            <a class="nav-link" href="/logout">🔓 Log off</a>
+        </div>
+
+        <div class="card">
+            <div class="points-header">
+
+                <div class="logo-wrapper">
+                    <img 
+                        src="{{ url_for('static', filename='logo.png') }}" 
+                        alt="Habitat logo"
+                        class="logo-large"
+                    >
+                </div>
+
+                <div class="points-left">
+                    <h2 style="margin:0;">Points i dag: {{ points }} / {{ daily_goal }}</h2>
+        
+                    <p style="font-size: 14px; color: #555; margin:4px 0 0 0;">
+                        {% if streak > 0 %}
+                            🔥 {{ streak }} dage i træk!
+                        {% else %}
+                            Start din streak i dag 💪
+                        {% endif %}
+                    </p>
+                </div>
+
+            </div>
+            {% if points < daily_goal %}
+                <div class="status-bad">
+                    Hvis du ikke når op på {{ daily_goal }} points i dag, opfordres du til at overføre 20 kr til velgørenhed.
+                </div>
+            {% else %}
+                <div class="status-good">
+                    Godt gået 💪 Du har nået dit mål i dag.
+                </div>
+            {% endif %}
+
+            <div class="progress-wrap">
+                <div class="progress-bar {% if points < daily_goal %}progress-low{% else %}progress-good{% endif %}"
+                     style="width: {{ progress }}%;">
+                    {{ progress }}%
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Dagens tasks</div>
+
+        {% if tasks %}
+            {% for task in tasks %}
+                <div class="task {% if task['id'] in completed %}done{% endif %}">
+                    <label>
+                        <input
+                            type="checkbox"
+                            onclick="window.location.href='/toggle/{{ task['id'] }}'"
+                            {% if task['id'] in completed %}checked{% endif %}
+                        >
+                        <span>{{ task['title'] }} ({{ task['points'] }} points)</span>
+                    </label>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                Du har endnu ikke valgt nogen tasks. Gå til “Administrer tasks” for at vælge eller oprette nogle.
+            </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                const splash = document.getElementById("splash");
+                splash.style.transition = "opacity 0.5s ease";
+                splash.style.opacity = 0;
+
+                setTimeout(() => splash.remove(), 500);
+            }, 2000); // 👈 2 sekunder
+        });
+    </script>
+</body>
+</html>

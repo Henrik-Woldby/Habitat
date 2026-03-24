@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: #f6f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            text-decoration: none;
+            background: white;
+            color: #1f5eff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #1f5eff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .profile-title {
+            min-width: 0;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-username {
+            font-size: 14px;
+            color: #667085;
+        }
+
+        .row {
+            margin: 14px 0;
+        }
+
+        .label {
+            font-size: 13px;
+            color: #667085;
+            margin-bottom: 4px;
+        }
+
+        .value {
+            font-size: 16px;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .pill {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 12px;
+            border-radius: 999px;
+            padding: 4px 8px;
+            background: #eef1f6;
+            color: #444;
+        }
+
+        .pill.admin {
+            background: #ecfdf3;
+            color: #027a48;
+        }
+
+        .pill.inactive {
+            background: #fef3f2;
+            color: #b42318;
+        }
+
+        .action-link {
+            display: inline-block;
+            text-decoration: none;
+            background: #1f5eff;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 16px;
+            box-sizing: border-box;
+        }
+
+        .header-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .clickable-card {
+            cursor: pointer;
+        }
+
+        @media (max-width: 640px) {
+            .action-link {
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="top-links">
+            <a class="nav-link" href="/">🏠 Forside</a>
+            <a class="nav-link" href="/calendar">📅 Kalender</a>
+            <a class="nav-link" href="/manage_tasks">⚙️ Tasks</a>
+            <a class="nav-link" href="/friends">👥 Venner</a>
+            {% if current_user and current_user["is_admin"] == 1 %}
+                <a class="nav-link" href="/admin">🛡️ Admin</a>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <div class="profile-header">
+                <div class="avatar">
+                    {{ user["name"][0]|upper }}
+                </div>
+        
+                <div class="profile-title">
+                    <div class="profile-name">{{ user["name"] }}</div>
+                    <div class="profile-username">@{{ user["username"] }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h1>Profil</h1>
+            <div class="subtitle">
+                Her kan du se oplysninger om den bruger, der er logget ind.
+            </div>
+
+            <div class="row">
+                <div class="label">Navn</div>
+                <div class="value">{{ user["name"] }}</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Brugernavn</div>
+                <div class="value">@{{ user["username"] }}</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Email</div>
+                <div class="value">{{ user["email"] }}</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Rolle</div>
+                <div class="value">
+                    {% if user["is_admin"] == 1 %}
+                        Administrator
+                        <div class="pill admin">Admin</div>
+                    {% else %}
+                        Bruger
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="label">Status</div>
+                <div class="value">
+                    {% if user["is_active"] == 1 %}
+                        Aktiv
+                    {% else %}
+                        Inaktiv
+                        <div class="pill inactive">Deaktiveret</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <a class="action-link" href="/edit-profile">✏️ Rediger profil</a>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

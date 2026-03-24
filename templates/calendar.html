@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: #f6f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            text-decoration: none;
+            background: white;
+            color: #1f5eff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 14px;
+        }
+
+        .weekday-row,
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .weekday {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #667085;
+            padding: 6px 0;
+        }
+
+        .empty-day {
+            min-height: 76px;
+        }
+
+        .day-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .day {
+            min-height: 76px;
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+            background: #eef1f6;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .good {
+            background: #16a34a;
+            color: white;
+        }
+
+        .bad {
+            background: #dc2626;
+            color: white;
+        }
+
+        .day-number {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .day-points {
+            margin-top: 6px;
+            font-size: 10px;
+            opacity: 0.9;
+            line-height: 1.2;
+        }
+
+        .legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+
+        .legend-good {
+            background: #16a34a;
+        }
+
+        .legend-bad {
+            background: #dc2626;
+        }
+
+        .legend-empty {
+            background: #eef1f6;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        
+        .month-nav {
+            text-decoration: none;
+            background: #eef1f6;
+            color: #1f5eff;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .today {
+            outline: 3px solid #1f5eff;
+            outline-offset: -2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="top-links">
+            <a class="nav-link" href="/">🏠 Forside</a>
+            <a class="nav-link" href="/manage_tasks">⚙️ Tasks</a>
+            <a class="nav-link" href="/friends">👥 Venner</a>
+            <a class="nav-link" href="/profile">👤 Profil</a>
+        </div>
+
+        <div class="card">
+            <div class="calendar-header">
+                <a class="month-nav" href="/calendar?year={{ prev_year }}&month={{ prev_month }}">←</a>
+                <div>
+                    <h1>{{ month_name }} {{ year }}</h1>
+                    <div class="subtitle">Klik på en dag for at se detaljerne.</div>
+                </div>
+                <a class="month-nav" href="/calendar?year={{ next_year }}&month={{ next_month }}">→</a>
+            </div>
+            <div class="weekday-row">
+                <div class="weekday">Man</div>
+                <div class="weekday">Tir</div>
+                <div class="weekday">Ons</div>
+                <div class="weekday">Tor</div>
+                <div class="weekday">Fre</div>
+                <div class="weekday">Lør</div>
+                <div class="weekday">Søn</div>
+            </div>
+
+            <div class="grid">
+                {% for week in calendar %}
+                    {% for day in week %}
+                        {% if day == 0 %}
+                            <div class="empty-day"></div>
+                        {% else %}
+                            {% set date_str = "%04d-%02d-%02d"|format(year, month, day) %}
+                            {% set points = data.get(date_str, None) %}
+
+                            <a class="day-link" href="/day/{{ date_str }}">
+                                <div class="day
+                                    {% if points is not none %}
+                                        {% if points >= daily_goal %}good{% else %}bad{% endif %}
+                                    {% endif %}
+                                    {% if date_str == today %}today{% endif %}
+                                ">
+                                    <div class="day-number">{{ day }}</div>
+
+                                    <div class="day-points">
+                                        {% if points is not none %}
+                                            {{ points }} points
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-good"></div>
+                    <span>Mål nået</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-bad"></div>
+                    <span>Mål ikke nået</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-empty"></div>
+                    <span>Ingen data</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

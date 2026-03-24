@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rediger task</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: #f6f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            text-decoration: none;
+            background: white;
+            color: #1f5eff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d3d8e2;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background: #fff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            background: #1f5eff;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: scale(0.99);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="top-links">
+            <a class="nav-link" href="/">🏠 Forside</a>
+            <a class="nav-link" href="/calendar">📅 Kalender</a>
+            <a class="nav-link" href="/manage_tasks">⚙️ Tasks</a>
+            <a class="nav-link" href="/friends">👥 Venner</a>
+            <a class="nav-link" href="/profile">👤 Profil</a>
+        </div>
+
+        <div class="card">
+            <h1>Rediger task</h1>
+            <div class="subtitle">
+                Kun tasks du selv har oprettet kan redigeres.
+            </div>
+        </div>
+
+        <div class="card">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="title">Navn</label>
+                    <input id="title" type="text" name="title" value="{{ task['title'] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="points">Points</label>
+                    <input id="points" type="number" name="points" value="{{ task['points'] }}" min="1" max="10" required>
+                </div>
+
+                <button class="btn" type="submit">Gem ændringer</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>

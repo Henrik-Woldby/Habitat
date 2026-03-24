@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venner</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: #f6f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            text-decoration: none;
+            background: white;
+            color: #1f5eff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin: 0 0 12px 0;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d3d8e2;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background: #fff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #1f5eff;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: scale(0.99);
+        }
+
+        .btn-secondary {
+            background: #eef1f6;
+            color: #1f5eff;
+        }
+
+        .empty {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .friend-card {
+            border: 1px solid #d8dee9;
+            border-radius: 14px;
+            padding: 14px;
+            margin: 12px 0;
+            background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+            box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+        }
+
+        .friend-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #1f5eff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .friend-title {
+            min-width: 0;
+        }
+
+        .friend-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            word-break: break-word;
+        }
+
+        .friend-username {
+            font-size: 13px;
+            color: #667085;
+        }
+
+        .friend-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-box {
+            background: #f3f6fb;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #667085;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .friend-status {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .status-good {
+            color: #027a48;
+            background: #ecfdf3;
+        }
+
+        .status-bad {
+            color: #b42318;
+            background: #fef3f2;
+        }
+
+        .request-item {
+            border: 1px solid #e5e9f2;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0;
+            background: #fafbfd;
+        }
+
+        .request-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .request-main {
+            min-width: 0;
+        }
+
+        .request-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .request-meta {
+            font-size: 13px;
+            color: #667085;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="top-links">
+            <a class="nav-link" href="/">🏠 Forside</a>
+            <a class="nav-link" href="/calendar">📅 Kalender</a>
+            <a class="nav-link" href="/manage_tasks">⚙️ Tasks</a>
+            <a class="nav-link" href="/profile">👤 Profil</a>
+        </div>
+
+        <div class="card">
+            <h1>Venner</h1>
+            <div class="subtitle">
+                Send venneanmodninger og se status for dine accepterede venner.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Accepterede venner</h2>
+
+            {% if friends %}
+                {% for friend in friends %}
+                    <div class="friend-card">
+                        <div class="friend-header">
+                            <div class="avatar">
+                                {{ friend["name"][0]|upper }}
+                            </div>
+
+                            <div class="friend-title">
+                                <div class="friend-name">{{ friend["name"] }}</div>
+                            </div>
+                        </div>
+
+                        <div class="friend-stats">
+                            <div class="stat-box">
+                                <div class="stat-label">Points i dag</div>
+                                <div class="stat-value">{{ friend["points_today"] }} / {{ daily_goal }}</div>
+                            </div>
+
+                            <div class="stat-box">
+                                <div class="stat-label">Streak</div>
+                                <div class="stat-value">🔥 {{ friend["streak"] }}</div>
+                            </div>
+                        </div>
+
+                        {% if friend["goal_reached"] %}
+                            <div class="friend-status status-good">
+                                Mål nået i dag ✅
+                            </div>
+                        {% else %}
+                            <div class="friend-status status-bad">
+                                Mål ikke nået i dag
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">Du har ingen accepterede venner endnu.</div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Send venneanmodning</h2>
+            <form method="POST" action="/send_friend_request">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="text" placeholder="F.eks. anna@mail.dk" required>
+                </div>
+                <button class="btn" type="submit">Send anmodning</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Modtagne venneanmodninger</h2>
+
+            {% if incoming_requests %}
+                {% for req in incoming_requests %}
+                    <div class="request-item">
+                        <div class="request-row">
+                            <div class="request-main">
+                                <div class="request-name">{{ req["name"] }}</div>
+                                <div class="request-meta">@{{ req["email"] }}</div>
+                            </div>
+
+                            <form method="POST" action="/accept_friend_request/{{ req['id'] }}">
+                                <button class="btn" type="submit">Acceptér</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">Du har ingen modtagne venneanmodninger.</div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Sendte venneanmodninger</h2>
+
+            {% if pending_requests %}
+                {% for req in pending_requests %}
+                    <div class="request-item">
+                        <div class="request-name">{{ req["name"] }}</div>
+                        <div class="request-meta">@{{ req["email"] }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">Du har ingen ventende anmodninger.</div>
+            {% endif %}
+        </div>
+
+    </div>
+</body>
+</html>

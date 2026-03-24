@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrer tasks</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: #f6f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            text-decoration: none;
+            background: white;
+            color: #1f5eff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 8px 0;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin: 18px 0 10px 0;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .task-card {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .task-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 14px;
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+            cursor: pointer;
+        }
+
+        .task-title-wrap {
+            min-width: 0;
+        }
+
+        .task-title {
+            font-size: 16px;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .task-meta {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .task-selected {
+            background: #e8f7e8;
+            border-left: 5px solid #2e9d45;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .edit-link {
+            text-decoration: none;
+            font-size: 14px;
+            color: #1f5eff;
+            font-weight: 600;
+            white-space: nowrap;
+            padding-left: 8px;
+        }
+
+        .owner-badge {
+            display: inline-block;
+            font-size: 12px;
+            color: #555;
+            background: #eef1f6;
+            border-radius: 999px;
+            padding: 4px 8px;
+            margin-top: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label.form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d3d8e2;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background: #fff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            background: #1f5eff;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: scale(0.99);
+        }
+
+        .empty {
+            color: #777;
+            font-size: 14px;
+        }
+
+        a.toggle-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            flex: 1;
+            min-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="top-links">
+            <a class="nav-link" href="/">🏠 Forside</a>
+            <a class="nav-link" href="/calendar">📅 Kalender</a>
+            <a class="nav-link" href="/friends">👥 Venner</a>
+            <a class="nav-link" href="/profile">👤 Profil</a>
+        </div>
+
+        <div class="card">
+            <h1>Administrer tasks</h1>
+            <div class="subtitle">
+                Vælg hvilke tasks der skal være på din personlige liste, eller opret en ny.
+            </div>
+        </div>
+
+        <h2>Vælg dine tasks</h2>
+
+        {% if all_tasks %}
+            {% for task in all_tasks %}
+                <div class="card task-card {% if task['selected'] == 1 %}task-selected{% endif %}">
+                    <div class="task-main">
+                        <a class="toggle-link" href="/toggle_user_task/{{ task['id'] }}">
+                            <div class="task-left">
+                                <input
+                                    class="checkbox"
+                                    type="checkbox"
+                                    {% if task['selected'] == 1 %}checked{% endif %}
+                                    onclick="window.location.href='/toggle_user_task/{{ task['id'] }}'; return false;"
+                                >
+
+                                <div class="task-title-wrap">
+                                    <div class="task-title">{{ task["title"] }}</div>
+                                    <div class="task-meta">{{ task["points"] }} points</div>
+
+                                    {% if task["created_by_user_id"] == current_user_id %}
+                                        <div class="owner-badge">Oprettet af dig</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+
+                        {% if task["created_by_user_id"] == current_user_id %}
+                            <a class="edit-link" href="/edit_task/{{ task['id'] }}">Rediger</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="card empty">Der er ingen tasks endnu.</div>
+        {% endif %}
+
+        <h2>Opret ny task</h2>
+
+        <div class="card">
+            <form method="POST" action="/create_task">
+                <div class="form-group">
+                    <label class="form-label" for="title">Navn på task</label>
+                    <input id="title" name="title" type="text" placeholder="F.eks. Gå 20 minutter" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="points">Points</label>
+                    <input id="points" name="points" type="number" placeholder="F.eks. 3" required min="1" max="10">
+                </div>
+
+                <button class="btn" type="submit">Gem task</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>
