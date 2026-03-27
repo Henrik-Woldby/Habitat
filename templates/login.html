@@ -48,35 +48,32 @@
         .brand-card {
             background: linear-gradient(135deg, var(--primary-soft), #ffffff);
             text-align: center;
-            padding: 4px 10px 10px 10px;
+            padding: 6px 8px 10px 8px; /* top lidt større end før */
         }
 
         .logo-wrap {
-            margin: 0;
+            margin: 0 0 2px 0;  /* 👈 2px = ca 2–3 mm visuelt */
             line-height: 0;
         }
 
         .logo {
-            width: 260px;
-            max-width: 88%;
-            height: auto;
+            width: 220px;
+            max-width: 85%;
             display: block;
             margin: 0 auto;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
         }
 
         h1 {
-            font-size: 28px;
-            margin: 2px 0 2px 0;
+            margin: 0;
+            padding: 0;
+            font-size: 26px;
+            line-height: 1;
             color: var(--primary);
-            line-height: 1.05;
         }
 
         .tagline {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--secondary);
-            margin: 2px 0 4px 0;
+            margin: 6px 0 4px 0;  /* 👈 matcher top spacing */
+            font-size: 14px;
             line-height: 1.2;
         }
 
@@ -195,54 +192,20 @@
         }
 
         @media (max-width: 640px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                margin: 0 auto;
-            }
-
-            .card {
-                padding: 12px;
-                margin-bottom: 10px;
-            }
-
             .brand-card {
-                padding: 2px 8px 8px 8px;
+                padding: 4px 6px 8px 6px;
             }
 
             .logo {
-                width: 220px;
-                max-width: 82%;
+                width: 200px;
             }
 
-            h1 {
-                font-size: 24px;
+            .logo-wrap {
+                margin-bottom: 2px;
             }
 
             .tagline {
-                font-size: 14px;
-                margin: 2px 0 3px 0;
-            }
-
-            .subtitle {
-                font-size: 13px;
-                line-height: 1.3;
-            }
-
-            .form-group {
-                margin-bottom: 12px;
-            }
-
-            .helper-links {
-                margin-top: 12px;
-                gap: 8px;
-            }
-
-            .example-box {
-                margin-top: 10px;
-                padding: 10px;
+                margin-top: 5px;
             }
         }
     </style>
