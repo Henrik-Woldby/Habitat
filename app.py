@@ -97,6 +97,153 @@ def inject_global_template_data():
         "current_user": user
     }
 
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    db = get_db()
+    error_message = None
+
+    if request.method == "POST":
+        name = request.form["name"].strip()
+        username = request.form["username"].strip().lower()
+        email = request.form["email"].strip().lower()
+        password = request.form.get("password", "").strip()
+        confirm_password = request.form.get("confirm_password", "").strip()
+
+        if not name:
+            error_message = "Navn må ikke være tomt."
+        elif not username:
+            error_message = "Brugernavn må ikke være tomt."
+        elif not email:
+            error_message = "Email må ikke være tom."
+        else:
+            existing_username = db.execute("""
+                SELECT id
+                FROM users
+                WHERE lower(username) = ?
+            """, (username,)).fetchone()
+
+            if existing_username is not None:
+                error_message = "Brugernavn er allerede i brug."
+
+            existing_email = db.execute("""
+                SELECT id
+                FROM users
+                WHERE lower(email) = ?
+            """, (email,)).fetchone()
+
+            if error_message is None and existing_email is not None:
+                error_message = "Email er allerede i brug."
+
+            if error_message is None and (password or confirm_password):
+                if password != confirm_password:
+                    error_message = "De to passwords er ikke ens."
+                elif not password:
+                    error_message = "Password må ikke være tomt."
+
+        if error_message is None:
+            password_hash = generate_password_hash(password) if password else None
+
+            cursor = db.execute("""
+                INSERT INTO users (name, username, email, password_hash, is_admin, is_active)
+                VALUES (?, ?, ?, ?, 0, 1)
+            """, (name, username, email, password_hash))
+
+            user_id = cursor.lastrowid
+            db.commit()
+
+            session["user_id"] = user_id
+            return redirect("/welcome")
+
+        form_data = {
+            "name": name,
+            "username": username,
+            "email": email
+        }
+        return render_template("signup.html", error_message=error_message, form_data=form_data)
+
+    return render_template("signup.html", error_message=None, form_data=None)
+
+@app.route("/welcome")
+def welcome():
+    user, redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    db = get_db()
+    user_id = user["id"]
+
+    # Hent de 5 tasks som flest brugere har valgt
+    popular_tasks = db.execute("""
+        SELECT
+            tc.id,
+            tc.title,
+            tc.points,
+            COUNT(ut.user_id) AS selected_count
+        FROM task_catalog tc
+        LEFT JOIN user_tasks ut
+            ON tc.id = ut.task_id
+           AND ut.is_active = 1
+        WHERE tc.is_active = 1
+        GROUP BY tc.id, tc.title, tc.points
+        ORDER BY selected_count DESC, tc.title ASC
+        LIMIT 5
+    """).fetchall()
+
+    # Hent hvilke af dem brugeren allerede har valgt
+    selected_rows = db.execute("""
+        SELECT task_id
+        FROM user_tasks
+        WHERE user_id = ?
+          AND is_active = 1
+    """, (user_id,)).fetchall()
+
+    selected_task_ids = [row["task_id"] for row in selected_rows]
+
+    return render_template(
+        "welcome.html",
+        popular_tasks=popular_tasks,
+        selected_task_ids=selected_task_ids
+    )
+
+@app.route("/welcome/toggle_task/<int:task_id>")
+def welcome_toggle_task(task_id):
+    user, redirect_response = require_login()
+    if redirect_response:
+        return redirect_response
+
+    db = get_db()
+    user_id = user["id"]
+
+    task = db.execute("""
+        SELECT id
+        FROM task_catalog
+        WHERE id = ? AND is_active = 1
+    """, (task_id,)).fetchone()
+
+    if task is None:
+        return "Task findes ikke", 404
+
+    existing = db.execute("""
+        SELECT id, is_active
+        FROM user_tasks
+        WHERE user_id = ? AND task_id = ?
+    """, (user_id, task_id)).fetchone()
+
+    if existing:
+        new_value = 0 if existing["is_active"] == 1 else 1
+        db.execute("""
+            UPDATE user_tasks
+            SET is_active = ?
+            WHERE id = ?
+        """, (new_value, existing["id"]))
+    else:
+        db.execute("""
+            INSERT INTO user_tasks (user_id, task_id, is_active)
+            VALUES (?, ?, 1)
+        """, (user_id, task_id))
+
+    db.commit()
+    return redirect("/welcome")
 
 @app.route("/request-password-reset", methods=["GET", "POST"])
 def request_password_reset():
@@ -333,6 +480,16 @@ def index():
     db = get_db()
     user_id = user["id"]
     today = str(date.today())
+
+    selected_count_row = db.execute("""
+        SELECT COUNT(*) AS task_count
+        FROM user_tasks
+        WHERE user_id = ?
+          AND is_active = 1
+    """, (user_id,)).fetchone()
+    
+    if selected_count_row["task_count"] == 0:
+        return redirect("/welcome")
 
     db.execute("""
         INSERT OR IGNORE INTO daily_logs (user_id, date)

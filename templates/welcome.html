@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Kom godt i gang</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="top-links">
+            <a class="nav-link" href="/">🏠 Forside</a>
+            <a class="nav-link" href="/manage_tasks">⚙️ Tasks</a>
+            <a class="nav-link" href="/profile">👤 Profil</a>
+            <a class="nav-link" href="/logout">🔓 Log off</a>
+        </div>
+
+        <div class="card">
+            <h1>Kom godt i gang</h1>
+            <div class="intro">
+                Vælg dine daglige mål blandt nedenstående, eller tryk på <strong>Tasks</strong>-knappen for at se flere mål eller oprette dine egne.
+            </div>
+        </div>
+
+        <div class="section-title">Populære mål</div>
+
+        {% if popular_tasks %}
+            {% for task in popular_tasks %}
+                <a class="task-link" href="/welcome/toggle_task/{{ task['id'] }}">
+                    <div class="task-card {% if task['id'] in selected_task_ids %}task-selected{% endif %}">
+                        <div class="task-row">
+                            <input
+                                type="checkbox"
+                                {% if task['id'] in selected_task_ids %}checked{% endif %}
+                            >
+
+                            <div>
+                                <div class="task-title">{{ task["title"] }}</div>
+                                <div class="task-meta">
+                                    {{ task["points"] }} points · valgt af {{ task["selected_count"] }} bruger{{ "" if task["selected_count"] == 1 else "e" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="card empty-state">
+                Der er endnu ingen mål at foreslå.
+            </div>
+        {% endif %}
+
+        <div class="cta-row">
+            <a class="btn" href="/manage_tasks">Se flere mål i Tasks</a>
+        </div>
+
+    </div>
+</body>
+</html>

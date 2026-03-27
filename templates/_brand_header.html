@@ -1,0 +1,18 @@
+<div class="card brand-card">
+    <div class="logo-wrap">
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="Tapout logo"
+            class="logo"
+        >
+    </div>
+
+    <h1>Tapout</h1>
+    <div class="tagline">Stop dårlige vaner. Start noget bedre.</div>
+
+    {% if subtitle %}
+        <div class="subtitle">
+            {{ subtitle }}
+        </div>
+    {% endif %}
+</div>

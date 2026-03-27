@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Rediger profil</title>
+    <title>Opret bruger</title>
 
     <style>
         body {
@@ -16,26 +16,8 @@
         }
 
         .container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .top-links {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-
-        .nav-link {
-            display: inline-block;
-            text-decoration: none;
-            background: white;
-            color: #1f5eff;
-            padding: 10px 14px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            font-weight: 600;
+            max-width: 520px;
+            margin: 10px auto;
         }
 
         .card {
@@ -80,19 +62,6 @@
             background: #fff;
         }
 
-        .helper {
-            font-size: 13px;
-            color: #667085;
-            margin-top: 4px;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 18px;
-        }
-
         .btn {
             display: inline-block;
             padding: 12px 16px;
@@ -103,12 +72,17 @@
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            text-decoration: none;
         }
 
-        .btn-secondary {
-            background: #eef1f6;
+        .helper {
+            margin-top: 14px;
+            font-size: 14px;
+        }
+
+        .helper a {
             color: #1f5eff;
+            text-decoration: none;
+            font-weight: 600;
         }
 
         .error-box {
@@ -126,20 +100,8 @@
 <body>
     <div class="container">
 
-        <div class="top-links">
-            <a class="nav-link" href="/">🏠 Forside</a>
-            <a class="nav-link" href="/calendar">📅 Kalender</a>
-            <a class="nav-link" href="/manage_tasks">⚙️ Tasks</a>
-            <a class="nav-link" href="/friends">👥 Venner</a>
-            <a class="nav-link" href="/profile">👤 Profil</a>
-        </div>
-
-        <div class="card">
-            <h1>Rediger profil</h1>
-            <div class="subtitle">
-                Her kan du ændre dine profiloplysninger. Password-felterne kan være tomme, hvis du ikke vil ændre password.
-            </div>
-        </div>
+        {% set subtitle = "Opret en ny bruger til Tapout. Password er valgfrit." %}
+        {% include "_brand_header.html" %}
 
         <div class="card">
             {% if error_message %}
@@ -147,38 +109,42 @@
                     {{ error_message }}
                 </div>
             {% endif %}
+
             <form method="POST">
                 <div class="form-group">
                     <label for="name">Navn</label>
-                    <input id="name" name="name" type="text" value="{{ user['name'] }}" required>
+                    <input id="name" name="name" type="text" required
+                           value="{{ form_data['name'] if form_data else '' }}">
                 </div>
 
                 <div class="form-group">
                     <label for="username">Brugernavn</label>
-                    <input id="username" name="username" type="text" value="{{ user['username'] }}" required>
+                    <input id="username" name="username" type="text" required
+                           value="{{ form_data['username'] if form_data else '' }}">
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input id="email" name="email" type="email" value="{{ user['email'] }}" required>
+                    <input id="email" name="email" type="email" required
+                           value="{{ form_data['email'] if form_data else '' }}">
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Nyt password</label>
+                    <label for="password">Password</label>
                     <input id="password" name="password" type="password">
-                    <div class="helper">Lad feltet være tomt, hvis du ikke vil ændre password.</div>
                 </div>
 
                 <div class="form-group">
-                    <label for="confirm_password">Gentag nyt password</label>
+                    <label for="confirm_password">Gentag password</label>
                     <input id="confirm_password" name="confirm_password" type="password">
                 </div>
 
-                <div class="btn-row">
-                    <button class="btn" type="submit">Gem ændringer</button>
-                    <a class="btn btn-secondary" href="/profile">Annuller</a>
-                </div>
+                <button class="btn" type="submit">Opret bruger</button>
             </form>
+
+            <div class="helper">
+                <a href="/login">← Tilbage til log on</a>
+            </div>
         </div>
 
     </div>
